@@ -1,0 +1,8 @@
+{
+  "${ModID}:Storm": {
+    "TEXT": [
+      "Storm",
+      "A thunderstorm is forecasted for this area of the Spire. Lightning can strike the player or monsters and you may be rewarded with charged cards. Be careful that the cards in your hand don't get wet..."
+    ]
+  }
+}
