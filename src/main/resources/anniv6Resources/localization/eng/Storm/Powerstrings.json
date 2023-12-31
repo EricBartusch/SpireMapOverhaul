@@ -1,0 +1,6 @@
+{
+  "${ModID}:ConduitPower": {
+    "NAME": "Conduit",
+    "DESCRIPTIONS": ["You gonna get zapped"]
+  }
+}
