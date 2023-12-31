@@ -17,6 +17,7 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
+import spireMapOverhaul.zones.storm.StormUtil;
 
 import java.util.ArrayList;
 
@@ -35,7 +36,7 @@ public class DarkenActorsPatch {
                 if (!shader.isCompiled()) {
                     System.err.println(shader.getLog());
                 }
-                if (shader.getLog().length() > 0) {
+                if (!shader.getLog().isEmpty()) {
                     System.out.println(shader.getLog());
                 }
             } catch (GdxRuntimeException e) {
@@ -59,14 +60,16 @@ public class DarkenActorsPatch {
 
         @SpireInsertPatch(locator = Locator.class)
         public static void startBuffer(AbstractPlayer __instance, SpriteBatch sb) {
-            sb.flush();
-            if (buffer == null) {
-                buffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+            if(StormUtil.isInStormZone()) {
+                sb.flush();
+                if (buffer == null) {
+                    buffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+                }
+                buffer.begin();
+                Gdx.gl.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+                Gdx.gl.glColorMask(true, true, true, true);
             }
-            buffer.begin();
-            Gdx.gl.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-            Gdx.gl.glColorMask(true, true, true, true);
         }
 
         private static class LocatorTwo extends SpireInsertLocator {
@@ -78,21 +81,23 @@ public class DarkenActorsPatch {
 
         @SpireInsertPatch(locator = LocatorTwo.class)
         public static void endBufferAndDraw(AbstractPlayer __instance, SpriteBatch sb) {
-            sb.flush();
-            buffer.end();
-            if (playerTexture == null) {
-                playerTexture = new TextureRegion(buffer.getColorBufferTexture());
-                playerTexture.flip(false, true);
-            } else {
-                playerTexture.setTexture(buffer.getColorBufferTexture());
+            if (StormUtil.isInStormZone()) {
+                sb.flush();
+                buffer.end();
+                if (playerTexture == null) {
+                    playerTexture = new TextureRegion(buffer.getColorBufferTexture());
+                    playerTexture.flip(false, true);
+                } else {
+                    playerTexture.setTexture(buffer.getColorBufferTexture());
+                }
+                initShader();
+                sb.begin();
+                sb.setShader(shader);
+                shader.setUniformf("u_time", AddLightningPatch.AbstractRoomFields.timeSinceStrike.get(AbstractDungeon.getCurrRoom()));
+                sb.draw(playerTexture, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
+                sb.setShader(null);
+                sb.end();
             }
-            initShader();
-            sb.begin();
-            sb.setShader(shader);
-            shader.setUniformf("u_time", AddLightningPatch.AbstractRoomFields.timeSinceStrike.get(AbstractDungeon.getCurrRoom()));
-            sb.draw(playerTexture, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
-            sb.setShader(null);
-            sb.end();
         }
     }
 
@@ -110,14 +115,16 @@ public class DarkenActorsPatch {
 
         @SpireInsertPatch(locator = Locator.class)
         public static void startBuffer(AbstractMonster __instance, SpriteBatch sb) {
-            sb.flush();
-            if (buffer == null) {
-                buffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+            if (StormUtil.isInStormZone()) {
+                sb.flush();
+                if (buffer == null) {
+                    buffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+                }
+                buffer.begin();
+                Gdx.gl.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+                Gdx.gl.glColorMask(true, true, true, true);
             }
-            buffer.begin();
-            Gdx.gl.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-            Gdx.gl.glColorMask(true, true, true, true);
         }
 
         private static class LocatorTwo extends SpireInsertLocator {
@@ -129,20 +136,23 @@ public class DarkenActorsPatch {
 
         @SpireInsertPatch(locator = LocatorTwo.class)
         public static void endBufferAndDraw(AbstractMonster __instance, SpriteBatch sb) {
-            sb.flush();
-            buffer.end();
-            if (playerTexture == null) {
-                playerTexture = new TextureRegion(buffer.getColorBufferTexture());
-                playerTexture.flip(false, true);
-            } else {
-                playerTexture.setTexture(buffer.getColorBufferTexture());
+            if (StormUtil.isInStormZone()) {
+
+                sb.flush();
+                buffer.end();
+                if (playerTexture == null) {
+                    playerTexture = new TextureRegion(buffer.getColorBufferTexture());
+                    playerTexture.flip(false, true);
+                } else {
+                    playerTexture.setTexture(buffer.getColorBufferTexture());
+                }
+                initShader();
+                sb.begin();
+                sb.setShader(shader);
+                sb.draw(playerTexture, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
+                sb.setShader(null);
+                sb.end();
             }
-            initShader();
-            sb.begin();
-            sb.setShader(shader);
-            sb.draw(playerTexture, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
-            sb.setShader(null);
-            sb.end();
         }
     }
 }

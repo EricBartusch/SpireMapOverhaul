@@ -71,7 +71,8 @@ public class SpireAnniversary6Mod implements
         PostRenderSubscriber,
         PostCampfireSubscriber,
         StartGameSubscriber,
-        ImGuiSubscriber {
+        ImGuiSubscriber,
+        PostUpdateSubscriber {
 
     public static final Logger logger = LogManager.getLogger("Zonemaster");
 
@@ -635,6 +636,12 @@ public class SpireAnniversary6Mod implements
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static float time = 0f;
+    @Override
+    public void receivePostUpdate() {
+        time += Gdx.graphics.getDeltaTime();
     }
 
     public static class SavableCurrentRunActive implements CustomSavable<Boolean> {
