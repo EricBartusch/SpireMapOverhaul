@@ -36,7 +36,7 @@ public class StormZone extends AbstractZone implements CombatModifyingZone, Rewa
 
     @Override
     public Color getColor() {
-        return Color.WHITE.cpy();
+        return Color.DARK_GRAY.cpy();
     }
 
 
