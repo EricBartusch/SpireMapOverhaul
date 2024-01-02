@@ -36,6 +36,7 @@ public class AddLightningPatch {
         @SpirePrefixPatch()
         public static void Prefix() {
             if(StormUtil.isInStormZone()) {
+                /* TODO: SFX with lightning? */
                 if (AbstractRoomFields.timeToStrike.get(AbstractDungeon.getCurrRoom()) < 0.0f) {
                     float rand_y = MathUtils.random(((float) Settings.HEIGHT / 2) - 50.0f * Settings.scale, ((float) Settings.HEIGHT / 2) - 350.0f * Settings.scale);
                     boolean renderBehind = rand_y > (float) Settings.HEIGHT / 2 - 250.0f;
@@ -46,6 +47,8 @@ public class AddLightningPatch {
                 AbstractRoomFields.timeToStrike.set(AbstractDungeon.getCurrRoom(), AbstractRoomFields.timeToStrike.get(AbstractDungeon.getCurrRoom()) - Gdx.graphics.getDeltaTime());
                 AbstractRoomFields.timeSinceStrike.set(AbstractDungeon.getCurrRoom(), AbstractRoomFields.timeSinceStrike.get(AbstractDungeon.getCurrRoom()) + Gdx.graphics.getDeltaTime());
 
+
+                //TODO: Improve this vfx
                 AbstractCreature conduitTarget = AbstractRoomFields.conduitTarget.get(AbstractDungeon.getCurrRoom());
                 if(conduitTarget != null) {
                     vfxTimer -= Gdx.graphics.getDeltaTime();

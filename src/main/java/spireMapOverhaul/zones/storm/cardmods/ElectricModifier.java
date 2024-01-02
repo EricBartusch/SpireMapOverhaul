@@ -3,6 +3,7 @@ package spireMapOverhaul.zones.storm.cardmods;
 import basemod.abstracts.AbstractCardModifier;
 import basemod.helpers.CardModifierManager;
 import com.megacrit.cardcrawl.actions.common.GainEnergyAction;
+import com.megacrit.cardcrawl.actions.utility.SFXAction;
 import com.megacrit.cardcrawl.actions.utility.UseCardAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.AbstractCreature;
@@ -11,6 +12,7 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import static spireMapOverhaul.SpireAnniversary6Mod.makeID;
 import static spireMapOverhaul.util.Wiz.atb;
 
+//TODO: add shader to card
 public class ElectricModifier extends AbstractCardModifier {
 
     public static String ID = makeID("ElectricModifier");
@@ -41,6 +43,8 @@ public class ElectricModifier extends AbstractCardModifier {
 
     @Override
     public void onUse(AbstractCard card, AbstractCreature target, UseCardAction action) {
+        //TODO apply vfx to player
+        atb(new SFXAction("ORB_PLASMA_CHANNEL", 0.1f));
         atb(new GainEnergyAction(1));
     }
 }

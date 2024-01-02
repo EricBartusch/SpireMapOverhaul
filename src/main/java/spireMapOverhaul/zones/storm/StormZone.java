@@ -6,7 +6,6 @@ import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
-import com.megacrit.cardcrawl.rewards.RewardItem;
 import spireMapOverhaul.abstracts.AbstractZone;
 import spireMapOverhaul.zoneInterfaces.CombatModifyingZone;
 import spireMapOverhaul.zoneInterfaces.RewardModifyingZone;
@@ -24,6 +23,7 @@ import static spireMapOverhaul.zones.storm.StormUtil.countValidCardsInHandToMake
 public class StormZone extends AbstractZone implements CombatModifyingZone, RewardModifyingZone {
     public static final String ID = "Storm";
 
+    //TODO: Maybe add ambient sfx to zone?
     public StormZone() {
         super(ID, Icons.MONSTER, Icons.ELITE);
         this.width = 3;

@@ -23,6 +23,7 @@ public class ConduitPower extends AbstractSMOPower {
     public static final String NAME = powerStrings.NAME;
     public static final String[] DESCRIPTIONS = powerStrings.DESCRIPTIONS;
 
+    //TODO: Maybe damage adheres to vuln/other damage effects?
     private int damage;
     private final AbstractCreature target;
 
