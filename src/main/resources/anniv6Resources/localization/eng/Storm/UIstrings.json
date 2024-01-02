@@ -9,5 +9,11 @@
     "TEXT": [
       "Damp "
     ]
+  },
+  "${ModID}:Electric": {
+    "TEXT": [
+      "Electric ",
+      " NL Gain [E]."
+    ]
   }
 }

@@ -11,6 +11,7 @@ import spireMapOverhaul.abstracts.AbstractZone;
 import spireMapOverhaul.zoneInterfaces.CombatModifyingZone;
 import spireMapOverhaul.zoneInterfaces.RewardModifyingZone;
 import spireMapOverhaul.zones.storm.cardmods.DampModifier;
+import spireMapOverhaul.zones.storm.cardmods.ElectricModifier;
 import spireMapOverhaul.zones.storm.patches.AddLightningPatch;
 import spireMapOverhaul.zones.storm.powers.ConduitPower;
 
@@ -41,13 +42,11 @@ public class StormZone extends AbstractZone implements CombatModifyingZone, Rewa
 
 
     @Override
-    public void modifyReward(RewardItem rewardItem) {
-
-    }
-
-    @Override
-    public void modifyRewards(ArrayList<RewardItem> rewards) {
-
+    public void modifyRewardCards(ArrayList<AbstractCard> cards) {
+        if(AbstractDungeon.cardRandomRng.randomBoolean()) {
+            AbstractCard card = cards.get(AbstractDungeon.cardRandomRng.random(cards.size() - 1));
+            CardModifierManager.addModifier(card, new ElectricModifier());
+        }
     }
 
     @Override
@@ -58,9 +57,9 @@ public class StormZone extends AbstractZone implements CombatModifyingZone, Rewa
                 public void update() {
                     int validCards = countValidCardsInHandToMakeDamp();
                     if(validCards > 0) {
-                        AbstractCard card = AbstractDungeon.player.hand.getRandomCard(AbstractDungeon.cardRandomRng);
+                        AbstractCard card = AbstractDungeon.player.hand.getRandomCard(AbstractDungeon.miscRng);
                         while (!cardValidToMakeDamp(card)) { //Get random cards until you get one you can make damp
-                            card = AbstractDungeon.player.hand.getRandomCard(AbstractDungeon.cardRandomRng);
+                            card = AbstractDungeon.player.hand.getRandomCard(AbstractDungeon.miscRng);
                         }
                         CardModifierManager.addModifier(card, new DampModifier());
                         card.flash();
