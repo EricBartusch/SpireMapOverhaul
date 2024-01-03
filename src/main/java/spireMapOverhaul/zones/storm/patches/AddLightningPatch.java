@@ -6,10 +6,12 @@ import com.evacipated.cardcrawl.modthespire.lib.SpireField;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePrefixPatch;
 import com.megacrit.cardcrawl.actions.animations.VFXAction;
+import com.megacrit.cardcrawl.actions.utility.SFXAction;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import spireMapOverhaul.SpireAnniversary6Mod;
 import spireMapOverhaul.zones.storm.StormUtil;
 import spireMapOverhaul.zones.storm.vfx.LightningEffect;
 import spireMapOverhaul.zones.storm.vfx.LightningOrbPassiveEffect;
@@ -41,6 +43,9 @@ public class AddLightningPatch {
                     float rand_y = MathUtils.random(((float) Settings.HEIGHT / 2) - 50.0f * Settings.scale, ((float) Settings.HEIGHT / 2) - 350.0f * Settings.scale);
                     boolean renderBehind = rand_y > (float) Settings.HEIGHT / 2 - 250.0f;
                     atb(new VFXAction(new LightningEffect(MathUtils.random(Settings.WIDTH), rand_y, renderBehind)));
+                    if(Settings.AMBIANCE_ON) {
+                        atb(new SFXAction(SpireAnniversary6Mod.THUNDER_KEY, 0.2f));
+                    }
                     AbstractRoomFields.timeToStrike.set(AbstractDungeon.getCurrRoom(), MathUtils.random(3.5f, 10.0f));
                     AbstractRoomFields.timeSinceStrike.set(AbstractDungeon.getCurrRoom(), 0.0f);
                 }

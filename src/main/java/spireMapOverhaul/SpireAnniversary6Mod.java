@@ -97,6 +97,9 @@ public class SpireAnniversary6Mod implements
     private static final String SKILL_L_ART = modID + "Resources/images/1024/skill.png";
     private static final String POWER_L_ART = modID + "Resources/images/1024/power.png";
 
+    public static final String THUNDER_KEY = makeID("Storm_Thunder");
+    private static final String THUNDER_MP3 = makePath("audio/storm/thunder.mp3");
+
     public static boolean initializedStrings = false;
 
     public static List<AbstractZone> unfilteredAllZones = new ArrayList<>();
@@ -491,7 +494,7 @@ public class SpireAnniversary6Mod implements
 
     @Override
     public void receiveAddAudio() {
-
+        BaseMod.addAudio(THUNDER_KEY, THUNDER_MP3);
     }
 
     private void registerCustomRewards() {
