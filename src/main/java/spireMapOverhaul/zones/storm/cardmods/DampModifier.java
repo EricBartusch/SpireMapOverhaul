@@ -24,7 +24,7 @@ public class DampModifier extends AbstractCardModifier {
 
     @Override
     public boolean shouldApply(AbstractCard card) {
-        return !CardModifierManager.hasModifier(card, ID);
+        return !CardModifierManager.hasModifier(card, ID) && !CardModifierManager.hasModifier(card, ElectricModifier.ID);
     }
 
     @Override

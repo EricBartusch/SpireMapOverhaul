@@ -142,7 +142,6 @@ void main()
 
         vec4 electricEffectColor = vec4(vec3(cl*cl*cl, cl*cl, cl), 0.25);
 
-        // Add the electric effect color to the texture color
         fragColor = col + electricEffectColor * electricEffectColor.a;
 	}
 }
