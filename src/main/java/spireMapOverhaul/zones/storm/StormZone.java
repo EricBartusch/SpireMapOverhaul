@@ -24,6 +24,7 @@ public class StormZone extends AbstractZone implements CombatModifyingZone, Rewa
     public static final String ID = "Storm";
 
     //TODO: Maybe add ambient sfx to zone?
+    //TODO: Apply shader to SCV
     public StormZone() {
         super(ID, Icons.MONSTER, Icons.ELITE);
         this.width = 3;
