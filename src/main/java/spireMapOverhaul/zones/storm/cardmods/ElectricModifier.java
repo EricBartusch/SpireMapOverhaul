@@ -12,7 +12,6 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import static spireMapOverhaul.SpireAnniversary6Mod.makeID;
 import static spireMapOverhaul.util.Wiz.atb;
 
-//TODO: add shader to card
 public class ElectricModifier extends AbstractCardModifier {
 
     public static String ID = makeID("ElectricModifier");

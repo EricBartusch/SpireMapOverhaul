@@ -83,7 +83,7 @@ public class RainPatch {
         }
 
         public static float getTime() {
-            return time;
+            return time % 25f; //weird things happen as the timer gets higher for the rain
         }
         public static boolean inStormZone() {
             return StormUtil.isInStormZone();
