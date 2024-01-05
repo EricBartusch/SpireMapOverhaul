@@ -52,7 +52,6 @@ public class AddLightningPatch {
                 AbstractRoomFields.timeSinceStrike.set(AbstractDungeon.getCurrRoom(), AbstractRoomFields.timeSinceStrike.get(AbstractDungeon.getCurrRoom()) + Gdx.graphics.getDeltaTime());
 
 
-                //TODO: Improve this vfx
                 AbstractCreature conduitTarget = AbstractRoomFields.conduitTarget.get(AbstractDungeon.getCurrRoom());
                 if(conduitTarget != null) {
                     vfxTimer -= Gdx.graphics.getDeltaTime();

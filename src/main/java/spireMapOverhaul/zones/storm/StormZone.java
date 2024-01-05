@@ -52,13 +52,6 @@ public class StormZone extends AbstractZone implements CombatModifyingZone, Rewa
     }
 
     @Override
-    public void atPreBattle() {
-        if(StormUtil.rainSoundId == 0L) {
-            StormUtil.rainSoundId = CardCrawlGame.sound.playAndLoop(RAIN_KEY, 0.5f);
-        }
-    }
-
-    @Override
     public void modifyRewardCards(ArrayList<AbstractCard> cards) {
         if(AbstractDungeon.cardRandomRng.randomBoolean()) {
             AbstractCard card = cards.get(AbstractDungeon.cardRandomRng.random(cards.size() - 1));
