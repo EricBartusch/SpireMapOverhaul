@@ -2,7 +2,7 @@
 
 out vec4 fragColor;
 
-varying vec2 v_texCoord;
+in vec2 v_texCoord;
 
 uniform vec2 u_screenSize;
 uniform sampler2D u_texture;

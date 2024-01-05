@@ -16,8 +16,8 @@ precision mediump float;
 
 out vec4 fragColor;
 
-varying LOWP vec4 v_color;
-varying vec2 v_texCoord;
+in LOWP vec4 v_color;
+in vec2 v_texCoord;
 
 uniform vec2 u_screenSize;
 uniform sampler2D u_texture;
