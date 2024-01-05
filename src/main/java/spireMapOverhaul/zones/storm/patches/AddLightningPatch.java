@@ -32,7 +32,6 @@ public class AddLightningPatch {
     public static class GreaseLightning {
 
         private static float vfxTimer;
-        private static float scale = 0.5F;
         private static float timeScaleStart = 0.1F;
         private static float timeScaleEnd = 0.3F;
         @SpirePrefixPatch()

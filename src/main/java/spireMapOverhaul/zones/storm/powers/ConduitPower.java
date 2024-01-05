@@ -13,6 +13,7 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.PowerStrings;
 import com.megacrit.cardcrawl.vfx.combat.LightningEffect;
 import spireMapOverhaul.abstracts.AbstractSMOPower;
+import spireMapOverhaul.zones.storm.StormZone;
 
 import static spireMapOverhaul.SpireAnniversary6Mod.makeID;
 import static spireMapOverhaul.util.Wiz.atb;
@@ -23,12 +24,11 @@ public class ConduitPower extends AbstractSMOPower {
     public static final String NAME = powerStrings.NAME;
     public static final String[] DESCRIPTIONS = powerStrings.DESCRIPTIONS;
 
-    //TODO: Maybe damage adheres to vuln/other damage effects?
     private int damage;
     private final AbstractCreature target;
 
     public ConduitPower(AbstractCreature target) {
-        super(POWER_ID, NAME, NeutralPowertypePatch.NEUTRAL, false, target, -1);
+        super(POWER_ID, NAME, StormZone.ID, NeutralPowertypePatch.NEUTRAL, false, target, -1);
         this.target = target;
     }
 

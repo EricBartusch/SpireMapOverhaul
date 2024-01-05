@@ -29,7 +29,7 @@ public class StormZone extends AbstractZone implements CombatModifyingZone, Rewa
     public static final String ID = "Storm";
 
     public StormZone() {
-        super(ID, Icons.MONSTER, Icons.ELITE);
+        super(ID, Icons.MONSTER, Icons.);
         this.width = 3;
         this.height = 4;
     }
