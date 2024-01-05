@@ -99,6 +99,8 @@ public class SpireAnniversary6Mod implements
 
     public static final String THUNDER_KEY = makeID("Storm_Thunder");
     private static final String THUNDER_MP3 = makePath("audio/storm/thunder.mp3");
+    public static final String RAIN_KEY = makeID("Storm_Rain");
+    private static final String RAIN_MP3 = makePath("audio/storm/rain.mp3");
 
     public static boolean initializedStrings = false;
 
@@ -495,6 +497,7 @@ public class SpireAnniversary6Mod implements
     @Override
     public void receiveAddAudio() {
         BaseMod.addAudio(THUNDER_KEY, THUNDER_MP3);
+        BaseMod.addAudio(RAIN_KEY, RAIN_MP3);
     }
 
     private void registerCustomRewards() {

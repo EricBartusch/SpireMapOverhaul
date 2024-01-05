@@ -38,7 +38,6 @@ public class AddLightningPatch {
         @SpirePrefixPatch()
         public static void Prefix() {
             if(StormUtil.isInStormZone()) {
-                /* TODO: SFX with lightning? */
                 if (AbstractRoomFields.timeToStrike.get(AbstractDungeon.getCurrRoom()) < 0.0f) {
                     float rand_y = MathUtils.random(((float) Settings.HEIGHT / 2) - 50.0f * Settings.scale, ((float) Settings.HEIGHT / 2) - 350.0f * Settings.scale);
                     boolean renderBehind = rand_y > (float) Settings.HEIGHT / 2 - 250.0f;

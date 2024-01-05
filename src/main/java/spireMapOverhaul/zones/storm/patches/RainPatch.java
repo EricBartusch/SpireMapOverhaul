@@ -5,12 +5,15 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.evacipated.cardcrawl.modthespire.Loader;
 import com.evacipated.cardcrawl.modthespire.ModInfo;
-import com.evacipated.cardcrawl.modthespire.lib.*;
+import com.evacipated.cardcrawl.modthespire.lib.SpireField;
+import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
+import com.evacipated.cardcrawl.modthespire.lib.SpirePostfixPatch;
+import com.evacipated.cardcrawl.modthespire.lib.SpirePrefixPatch;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.scenes.AbstractScene;
 import javassist.*;
 import org.clapper.util.classutil.*;
-import spireMapOverhaul.SpireAnniversary6Mod;
 import spireMapOverhaul.zones.storm.StormUtil;
 
 import java.io.File;
@@ -106,6 +109,32 @@ public class RainPatch {
                     System.out.println("ERROR: snow shader:");
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    @SpirePatch(clz = AbstractScene.class, method = "updateAmbienceVolume")
+    public static class SetRainAmbiance {
+
+        @SpirePrefixPatch
+        public static void Prefix(AbstractScene __instance) {
+            if(StormUtil.isInStormZone() ) {
+                if (Settings.AMBIANCE_ON) {
+                    CardCrawlGame.sound.adjustVolume(RAIN_KEY, StormUtil.rainSoundId);
+                } else {
+                    CardCrawlGame.sound.adjustVolume(RAIN_KEY, StormUtil.rainSoundId, 0.0f);
+                }
+            }
+        }
+    }
+
+    @SpirePatch(clz = AbstractScene.class, method = "fadeOutAmbiance")
+    public static class FadeOutAmbiencePatch {
+
+        @SpirePostfixPatch
+        public static void Postfix() {
+            if (StormUtil.isInStormZone()) {
+                CardCrawlGame.sound.adjustVolume(RAIN_KEY, StormUtil.rainSoundId, 0.0f);
             }
         }
     }

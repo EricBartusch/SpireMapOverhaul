@@ -4,10 +4,14 @@ import basemod.helpers.CardModifierManager;
 import com.badlogic.gdx.graphics.Color;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.blue.Storm;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import spireMapOverhaul.SpireAnniversary6Mod;
 import spireMapOverhaul.abstracts.AbstractZone;
 import spireMapOverhaul.zoneInterfaces.CombatModifyingZone;
+import spireMapOverhaul.zoneInterfaces.OnTravelZone;
 import spireMapOverhaul.zoneInterfaces.RewardModifyingZone;
 import spireMapOverhaul.zones.storm.cardmods.DampModifier;
 import spireMapOverhaul.zones.storm.cardmods.ElectricModifier;
@@ -16,14 +20,14 @@ import spireMapOverhaul.zones.storm.powers.ConduitPower;
 
 import java.util.ArrayList;
 
+import static spireMapOverhaul.SpireAnniversary6Mod.RAIN_KEY;
 import static spireMapOverhaul.util.Wiz.*;
 import static spireMapOverhaul.zones.storm.StormUtil.cardValidToMakeDamp;
 import static spireMapOverhaul.zones.storm.StormUtil.countValidCardsInHandToMakeDamp;
 
-public class StormZone extends AbstractZone implements CombatModifyingZone, RewardModifyingZone {
+public class StormZone extends AbstractZone implements CombatModifyingZone, RewardModifyingZone, OnTravelZone {
     public static final String ID = "Storm";
 
-    //TODO: Maybe add ambient sfx to zone?
     public StormZone() {
         super(ID, Icons.MONSTER, Icons.ELITE);
         this.width = 3;
@@ -40,6 +44,19 @@ public class StormZone extends AbstractZone implements CombatModifyingZone, Rewa
         return Color.DARK_GRAY.cpy();
     }
 
+    public void onEnter() {
+        StormUtil.rainSoundId = CardCrawlGame.sound.playAndLoop(RAIN_KEY, 0.5f);
+    }
+    public void onExit() {
+        CardCrawlGame.sound.stop(RAIN_KEY, StormUtil.rainSoundId);
+    }
+
+    @Override
+    public void atPreBattle() {
+        if(StormUtil.rainSoundId == 0L) {
+            StormUtil.rainSoundId = CardCrawlGame.sound.playAndLoop(RAIN_KEY, 0.5f);
+        }
+    }
 
     @Override
     public void modifyRewardCards(ArrayList<AbstractCard> cards) {
