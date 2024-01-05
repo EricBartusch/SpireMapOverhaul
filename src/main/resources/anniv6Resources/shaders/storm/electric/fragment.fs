@@ -8,6 +8,7 @@ in vec2 v_texCoord;
 
 uniform vec2 u_screenSize;
 uniform float u_time;
+uniform float u_bright_time;
 uniform sampler2D u_texture;
 
 vec3 mod289(vec3 x) {
@@ -140,7 +141,7 @@ void main()
         float _cl = clouds(uv);
         float cl = clamp(1.3-(30.0*abs(_cl-0.5)), 0.0, 1.0);
 
-        vec4 electricEffectColor = vec4(vec3(cl*cl*cl, cl*cl, cl), 0.25);
+        vec4 electricEffectColor = vec4(vec3(cl*cl*cl, cl*cl, cl), 0.25 + (0.5 - u_bright_time));
 
         fragColor = col + electricEffectColor * electricEffectColor.a;
 	}

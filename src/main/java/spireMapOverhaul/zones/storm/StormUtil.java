@@ -17,6 +17,8 @@ import static spireMapOverhaul.util.Wiz.getCurZone;
 public class StormUtil {
 
     public static long rainSoundId;
+    public static boolean activePlayerLightning;
+    public static float brightTime;
 
     public static FrameBuffer createBuffer() {
         return createBuffer(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

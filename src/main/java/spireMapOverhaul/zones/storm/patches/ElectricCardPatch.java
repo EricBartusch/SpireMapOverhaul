@@ -46,6 +46,7 @@ public class ElectricCardPatch {
                     ShaderProgram oldShader = spriteBatch.getShader();
                     spriteBatch.setShader(electricShader);
                     electricShader.setUniformf("u_time", SpireAnniversary6Mod.time);
+                    electricShader.setUniformf("u_bright_time", 0.5f);
 
                     spriteBatch.draw(t, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
                     spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -114,6 +115,7 @@ public class ElectricCardPatch {
                 oldShader = sb.getShader();
                 sb.setShader(electricShader);
                 electricShader.setUniformf("u_time", SpireAnniversary6Mod.time);
+                electricShader.setUniformf("u_bright_time", 0.5f);
             }
         }
 

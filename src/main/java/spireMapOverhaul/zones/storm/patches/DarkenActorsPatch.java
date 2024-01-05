@@ -22,9 +22,11 @@ import spireMapOverhaul.zones.storm.StormUtil;
 import java.util.ArrayList;
 
 import static spireMapOverhaul.SpireAnniversary6Mod.makeShaderPath;
+import static spireMapOverhaul.SpireAnniversary6Mod.time;
 
 public class DarkenActorsPatch {
     private static ShaderProgram shader = null;
+    private static ShaderProgram electricShader = null;
 
     private static void initShader() {
         if (shader == null) {
@@ -46,6 +48,26 @@ public class DarkenActorsPatch {
         }
     }
 
+    private static void initElectricShader() {
+        if (electricShader == null) {
+            try {
+                electricShader = new ShaderProgram(
+                        Gdx.files.internal(makeShaderPath("storm/electric/vertex.vs")),
+                        Gdx.files.internal(makeShaderPath("storm/electric/fragment.fs"))
+                );
+                if (!electricShader.isCompiled()) {
+                    System.err.println(electricShader.getLog());
+                }
+                if (!electricShader.getLog().isEmpty()) {
+                    System.out.println(electricShader.getLog());
+                }
+            } catch (GdxRuntimeException e) {
+                System.out.println("ERROR: electric shader:");
+                e.printStackTrace();
+            }
+        }
+    }
+
     @SpirePatch(clz = AbstractPlayer.class, method = "renderPlayerImage")
     public static class DarkenPlayer {
         private static FrameBuffer buffer;
@@ -60,7 +82,7 @@ public class DarkenActorsPatch {
 
         @SpireInsertPatch(locator = Locator.class)
         public static void startBuffer(AbstractPlayer __instance, SpriteBatch sb) {
-            if(StormUtil.isInStormZone()) {
+            if(StormUtil.isInStormZone() || StormUtil.activePlayerLightning) {
                 sb.flush();
                 if (buffer == null) {
                     buffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
@@ -81,7 +103,24 @@ public class DarkenActorsPatch {
 
         @SpireInsertPatch(locator = LocatorTwo.class)
         public static void endBufferAndDraw(AbstractPlayer __instance, SpriteBatch sb) {
-            if (StormUtil.isInStormZone()) {
+            if (StormUtil.activePlayerLightning) {
+                sb.flush();
+                buffer.end();
+                if (playerTexture == null) {
+                    playerTexture = new TextureRegion(buffer.getColorBufferTexture());
+                    playerTexture.flip(false, true);
+                } else {
+                    playerTexture.setTexture(buffer.getColorBufferTexture());
+                }
+                initElectricShader();
+                sb.begin();
+                sb.setShader(electricShader);
+                electricShader.setUniformf("u_time", time);
+                electricShader.setUniformf("u_bright_time", StormUtil.brightTime);
+                sb.draw(playerTexture, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
+                sb.setShader(null);
+                sb.end();
+            } else if (StormUtil.isInStormZone()) {
                 sb.flush();
                 buffer.end();
                 if (playerTexture == null) {
