@@ -11,8 +11,8 @@ import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.localization.PowerStrings;
+import com.megacrit.cardcrawl.vfx.combat.LightningEffect;
 import spireMapOverhaul.abstracts.AbstractSMOPower;
-import spireMapOverhaul.zones.storm.vfx.LightningEffect;
 
 import static spireMapOverhaul.SpireAnniversary6Mod.makeID;
 import static spireMapOverhaul.util.Wiz.atb;
@@ -45,7 +45,7 @@ public class ConduitPower extends AbstractSMOPower {
 
     @Override
     public void atEndOfRound() {
-        atb(new VFXAction(new LightningEffect(owner.drawX, owner.drawY, false)));
+        atb(new VFXAction(new LightningEffect(owner.drawX, owner.drawY)));
         atb(new RemoveSpecificPowerAction(owner, owner, this));
         atb(new DamageAction(owner, new DamageInfo(null, damage, DamageInfo.DamageType.THORNS), AbstractGameAction.AttackEffect.NONE, true));
         atb(new SFXAction("ORB_LIGHTNING_EVOKE"));

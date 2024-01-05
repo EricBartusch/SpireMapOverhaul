@@ -11,10 +11,10 @@ import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import com.megacrit.cardcrawl.vfx.combat.ImpactSparkEffect;
 import spireMapOverhaul.SpireAnniversary6Mod;
 import spireMapOverhaul.zones.storm.StormUtil;
-import spireMapOverhaul.zones.storm.vfx.LightningEffect;
-import spireMapOverhaul.zones.storm.vfx.LightningOrbPassiveEffect;
+import spireMapOverhaul.zones.storm.vfx.AlwaysBehindLightningEffect;
 
 import static spireMapOverhaul.util.Wiz.atb;
 
@@ -41,7 +41,7 @@ public class AddLightningPatch {
                 if (AbstractRoomFields.timeToStrike.get(AbstractDungeon.getCurrRoom()) < 0.0f) {
                     float rand_y = MathUtils.random(((float) Settings.HEIGHT / 2) - 50.0f * Settings.scale, ((float) Settings.HEIGHT / 2) - 350.0f * Settings.scale);
                     boolean renderBehind = rand_y > (float) Settings.HEIGHT / 2 - 250.0f;
-                    atb(new VFXAction(new LightningEffect(MathUtils.random(Settings.WIDTH), rand_y, renderBehind)));
+                    atb(new VFXAction(new AlwaysBehindLightningEffect(MathUtils.random(Settings.WIDTH), rand_y, renderBehind)));
                     if(Settings.AMBIANCE_ON) {
                         atb(new SFXAction(SpireAnniversary6Mod.THUNDER_KEY, 0.2f));
                     }
@@ -56,19 +56,17 @@ public class AddLightningPatch {
                 AbstractCreature conduitTarget = AbstractRoomFields.conduitTarget.get(AbstractDungeon.getCurrRoom());
                 if(conduitTarget != null) {
                     vfxTimer -= Gdx.graphics.getDeltaTime();
-                    if (vfxTimer < 0.0F) {
-                        AbstractDungeon.effectList.add(new LightningOrbPassiveEffect(MathUtils.random(conduitTarget.hb.cX + conduitTarget.hb.width * scale, conduitTarget.hb.cX - conduitTarget.hb.width * scale), MathUtils.random(conduitTarget.hb.cY + conduitTarget.hb.height * scale, conduitTarget.hb.cY - conduitTarget.hb.height * scale)));
-                        if (MathUtils.randomBoolean()) {
-                            AbstractDungeon.effectList.add(new LightningOrbPassiveEffect(MathUtils.random(conduitTarget.hb.cX + conduitTarget.hb.width * scale, conduitTarget.hb.cX - conduitTarget.hb.width * scale), MathUtils.random(conduitTarget.hb.cY + conduitTarget.hb.height * scale, conduitTarget.hb.cY - conduitTarget.hb.height * scale)));
-                        }
+                    if (vfxTimer < 0.0f) {
+                        AbstractDungeon.topLevelEffectsQueue.add(new ImpactSparkEffect(conduitTarget.drawX +
+                                MathUtils.random(-20.0F, 20.0f) * Settings.scale, conduitTarget.drawY +
+                                MathUtils.random(-20.0F, 20.0f) * Settings.scale));
+
                         vfxTimer = MathUtils.random(timeScaleStart, timeScaleEnd);
-                        scale *= 0.5F;
-                        timeScaleStart -= 0.01F;
-                        timeScaleEnd -= 0.03F;
-                        if(!AbstractDungeon.actionManager.turnHasEnded) { //close into center if turn ends
-                            scale = 0.5f;
+                        if(!AbstractDungeon.actionManager.turnHasEnded) {
                             timeScaleStart = 0.1f;
-                            timeScaleEnd = 0.3F;
+                            timeScaleEnd = 0.3f;
+                        } else {
+                            vfxTimer = 0.01f;
                         }
                     }
                 }

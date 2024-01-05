@@ -15,13 +15,13 @@ import com.megacrit.cardcrawl.vfx.combat.ImpactSparkEffect;
 
 import static spireMapOverhaul.SpireAnniversary6Mod.modID;
 
-public class LightningEffect extends AbstractGameEffect {
+public class AlwaysBehindLightningEffect extends AbstractGameEffect {
     private float x;
     private float y;
     public static Texture LIGHTNING = new Texture(modID + "Resources/images/vfx/lightning.png");
 
 
-    public LightningEffect(float x, float y, boolean renderBehind) {
+    public AlwaysBehindLightningEffect(float x, float y, boolean renderBehind) {
         this.x = x;
         this.y = y;
         this.color = new Color(1.0f, 251.0f/255.0f, 139.0f/255.0f, 1.0f);
