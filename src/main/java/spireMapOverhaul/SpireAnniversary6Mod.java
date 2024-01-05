@@ -8,6 +8,7 @@ import basemod.eventUtil.util.Condition;
 import basemod.helpers.RelicType;
 import basemod.helpers.TextCodeInterpreter;
 import basemod.interfaces.*;
+import basemod.patches.com.megacrit.cardcrawl.helpers.TipHelper.HeaderlessTip;
 import basemod.patches.com.megacrit.cardcrawl.screens.options.DropdownMenu.DropdownColoring;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -18,6 +19,7 @@ import com.evacipated.cardcrawl.mod.stslib.Keyword;
 import com.evacipated.cardcrawl.mod.stslib.icons.CustomIconHelper;
 import com.evacipated.cardcrawl.modthespire.Loader;
 import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
+import com.evacipated.cardcrawl.modthespire.lib.SpireEnum;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.google.gson.Gson;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
@@ -25,6 +27,7 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.events.AbstractEvent;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.localization.*;
+import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.rewards.RewardSave;
 import com.megacrit.cardcrawl.screens.options.DropdownMenu;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
@@ -49,6 +52,7 @@ import spireMapOverhaul.util.Wiz;
 import spireMapOverhaul.util.ZoneShapeMaker;
 import spireMapOverhaul.zoneInterfaces.CampfireModifyingZone;
 import spireMapOverhaul.zoneInterfaces.EncounterModifyingZone;
+import spireMapOverhaul.rewards.HealReward;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -81,6 +85,11 @@ public class SpireAnniversary6Mod implements
             Settings.GameLanguage.ZHS
     };
 
+    public static class Enums {
+        @SpireEnum
+        public static AbstractPotion.PotionRarity ZONE;
+    }
+
     public static SpireAnniversary6Mod thismod;
     public static SpireConfig modConfig = null;
     public static SpireConfig currentRunConfig = null;
@@ -103,6 +112,8 @@ public class SpireAnniversary6Mod implements
     private static final String RAIN_MP3 = makePath("audio/storm/rain.mp3");
 
     public static boolean initializedStrings = false;
+
+    public static final Map<String, Keyword> keywords = new HashMap<>();
 
     public static List<AbstractZone> unfilteredAllZones = new ArrayList<>();
     public static List<AbstractZone> allZones = new ArrayList<>();
@@ -211,9 +222,8 @@ public class SpireAnniversary6Mod implements
                 .cards();
 
         CustomIconHelper.addCustomIcon(MonsterIcon.get());
-        CustomIconHelper.addCustomIcon(EliteIcon.get());
         CustomIconHelper.addCustomIcon(EventIcon.get());
-        CustomIconHelper.addCustomIcon(RewardIcon.get());
+        CustomIconHelper.addCustomIcon(ChestIcon.get());
         CustomIconHelper.addCustomIcon(ShopIcon.get());
         CustomIconHelper.addCustomIcon(RestIcon.get());
 
@@ -411,6 +421,10 @@ public class SpireAnniversary6Mod implements
 
         for (Keyword keyword : keywords) {
             BaseMod.addKeyword(modID, keyword.PROPER_NAME, keyword.NAMES, keyword.DESCRIPTION);
+            if (!keyword.ID.isEmpty())
+            {
+                SpireAnniversary6Mod.keywords.put(keyword.ID, keyword);
+            }
         }
     }
 
@@ -512,6 +526,14 @@ public class SpireAnniversary6Mod implements
                     return new RewardSave(CustomRewardTypes.SMO_SINGLECARDREWARD.toString(), s);
                 }
         );
+
+        BaseMod.registerCustomReward(CustomRewardTypes.HEALREWARD,
+                rewardSave -> new HealReward(rewardSave.id, rewardSave.amount),
+                reward -> {
+                    int i = ((HealReward) reward).amount;
+                    return new RewardSave(CustomRewardTypes.HEALREWARD.toString(), ((HealReward) reward).iconPath, i, 0);
+                }
+        );
     }
 
     //Due to reward scrolling's orthographic camera and render order of rewards, the card needs to be rendered outside of the render method
@@ -530,12 +552,11 @@ public class SpireAnniversary6Mod implements
     private static final float DROPDOWN_X = 400f;
     private static final float DROPDOWN_Y = 600f;
     private ModLabeledToggleButton filterCheckbox;
-    private static final float CHECKBOX_X = 800f;
-    private static final float CHECKBOX_Y = 575f;
+    private static final float CHECKBOX_X = 400f;
+    private static final float CHECKBOX_Y = 520f;
     private AbstractZone filterViewedZone;
-    private ModLabel viewedZoneDescription;
-    private static final float DESC_X = 400f;
-    private static final float DESC_Y = 540f;
+    private static final float DESC_X = 760f;
+    private static final float DESC_Y = 575f;
 
     private void initializeConfig() {
         UIStrings configStrings = CardCrawlGame.languagePack.getUIString(makeID("ConfigMenuText"));
@@ -560,6 +581,7 @@ public class SpireAnniversary6Mod implements
         IUIElement wrapperDropdown = new IUIElement() {
             public void render(SpriteBatch sb) {
                 filterDropdown.render(sb, DROPDOWN_X * Settings.xScale,DROPDOWN_Y * Settings.yScale);
+                HeaderlessTip.renderHeaderlessTip(DESC_X * Settings.xScale,DESC_Y * Settings.yScale, filterViewedZone.tooltipBody);
             }
             public void update() {
                 filterDropdown.update();
@@ -572,10 +594,6 @@ public class SpireAnniversary6Mod implements
                 (label) -> {},
                 (button) -> setFilterConfig(filterViewedZone.id, button.enabled));
         settingsPanel.addUIElement(filterCheckbox);
-
-        viewedZoneDescription = new ModLabel("Unassigned",DESC_X,DESC_Y,FontHelper.tipBodyFont,settingsPanel,
-                (label) -> {});
-        settingsPanel.addUIElement(viewedZoneDescription);
         filterSetViewedZone(0);
 
         BaseMod.registerModBadge(badge, configStrings.TEXT[0], configStrings.TEXT[1], configStrings.TEXT[2], settingsPanel);
@@ -584,7 +602,6 @@ public class SpireAnniversary6Mod implements
     private void filterSetViewedZone(int index) {
         filterViewedZone = unfilteredAllZones.get(index);
         filterCheckbox.toggle.enabled = getFilterConfig(filterViewedZone.id);
-        viewedZoneDescription.text = filterViewedZone.tooltipBody;
     }
 
     private void initializeSavedData() {

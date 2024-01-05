@@ -36,7 +36,7 @@ public class InvasionZone extends AbstractZone implements EncounterModifyingZone
     private static final int ELITE_EXTRA_GOLD = 100;
 
     public InvasionZone() {
-        super(ID, Icons.MONSTER, Icons.ELITE, Icons.SHOP);
+        super(ID, Icons.MONSTER, Icons.SHOP);
         this.width = 3;
         this.height = 4;
     }
@@ -48,7 +48,7 @@ public class InvasionZone extends AbstractZone implements EncounterModifyingZone
 
     @Override
     public Color getColor() {
-        return Color.BLUE.cpy();
+        return new Color(0.3f,0.5f, 0.35f, 1f);
     }
 
     @Override
@@ -68,7 +68,6 @@ public class InvasionZone extends AbstractZone implements EncounterModifyingZone
     public void distributeRooms(Random rng, ArrayList<AbstractRoom> roomList) {
         //Guarantee at least one elite
         placeRoomRandomly(rng, roomOrDefault(roomList, (room)->room instanceof MonsterRoomElite, MonsterRoomElite::new));
-
     }
 
     @Override

@@ -46,15 +46,14 @@ public abstract class AbstractZone {
     static {
         iconsMap = new HashMap<>();
         iconsMap.put(Icons.MONSTER, "[" +SpireAnniversary6Mod.modID+":MonsterIcon]");
-        iconsMap.put(Icons.ELITE, "[" +SpireAnniversary6Mod.modID+":EliteIcon]");
-        iconsMap.put(Icons.REWARD, "[" +SpireAnniversary6Mod.modID+":RewardIcon]");
+        iconsMap.put(Icons.CHEST, "[" +SpireAnniversary6Mod.modID+":ChestIcon]");
         iconsMap.put(Icons.EVENT, "[" +SpireAnniversary6Mod.modID+":EventIcon]");
         iconsMap.put(Icons.SHOP, "[" +SpireAnniversary6Mod.modID+":ShopIcon]");
         iconsMap.put(Icons.REST, "[" +SpireAnniversary6Mod.modID+":RestIcon]");
     }
 
     public enum Icons {
-        MONSTER, ELITE, REWARD, EVENT, REST, SHOP
+        MONSTER, CHEST, EVENT, REST, SHOP
     }
 
     public final String id;
@@ -156,7 +155,7 @@ public abstract class AbstractZone {
             }
             float anchorX = x * SPACING_X + OFFSET_X - ZoneShapeMaker.FB_OFFSET;
             float anchorY = y * Settings.MAP_DST_Y + OFFSET_Y + DungeonMapScreen.offsetY - ZoneShapeMaker.FB_OFFSET;
-            sb.setColor(getColor().cpy().mul(1, 0.9f, 0.85f, alpha*0.8f)); //just making the random color more palatable
+            sb.setColor(getColor().cpy().mul(1f, 1f, 1f, alpha*0.5f));
             sb.draw(shapeRegion, anchorX, anchorY);
             boolean showTooltip = false;
             for (Hitbox hb : hitboxes) {
@@ -232,7 +231,7 @@ public abstract class AbstractZone {
     //By default, the rows for treasure nodes and the final campfire before the boss are protected, meaning that random
     //(re)placement with the built-in AbstractZone methods won't affect them. Zones with manual placement logic should
     //either replicate these checks or override canIncludeTreasureRow/canIncludeFinalCampfireRow to return false.
-    private boolean isProtectedRow(int row) {
+    protected final boolean isProtectedRow(int row) {
         return row == TREASURE_ROW || row == FINAL_CAMPFIRE_ROW;
     }
 
@@ -291,7 +290,7 @@ public abstract class AbstractZone {
      * Areas may claim more unusual shapes or manually define their path/multiple paths if they wish.
      */
     public boolean generateMapArea(MapPlanner planner) {
-        return generateNormalArea(planner, 3, 4);
+        return generateNormalArea(planner, width, height);
     }
 
     public final boolean generateNormalArea(MapPlanner planner, int width, int height) {
@@ -389,7 +388,7 @@ public abstract class AbstractZone {
     }
 
     /**
-     * Replace rooms that match a filter with rooms from a supplier.
+     * Replace rooms that match a filter (and aren't in protected rows) with rooms from a supplier.
      * @param percentage The percentage of valid rooms to replace, from 0-1
      */
     protected final void replaceRoomsRandomly(Random rng, Supplier<AbstractRoom> roomSupplier, Predicate<AbstractRoom> roomFilter, float percentage) {
