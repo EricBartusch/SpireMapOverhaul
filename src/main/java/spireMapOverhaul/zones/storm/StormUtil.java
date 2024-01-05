@@ -6,12 +6,15 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import spireMapOverhaul.zones.storm.cardmods.DampModifier;
 
 import java.util.stream.Collectors;
 
+import static spireMapOverhaul.SpireAnniversary6Mod.makeShaderPath;
 import static spireMapOverhaul.util.Wiz.getCurZone;
 
 public class StormUtil {
@@ -51,5 +54,68 @@ public class StormUtil {
 
     public static boolean isInStormZone() {
         return getCurZone() instanceof StormZone;
+    }
+
+    public static ShaderProgram initDripShader(ShaderProgram dripShader) {
+        if (dripShader == null) {
+            try {
+                dripShader = new ShaderProgram(
+                        Gdx.files.internal(makeShaderPath("storm/drip/vertex.vs")),
+                        Gdx.files.internal(makeShaderPath("storm/drip/fragment.fs"))
+                );
+                if (!dripShader.isCompiled()) {
+                    System.err.println(dripShader.getLog());
+                }
+                if (!dripShader.getLog().isEmpty()) {
+                    System.out.println(dripShader.getLog());
+                }
+            } catch (GdxRuntimeException e) {
+                System.out.println("ERROR: Failed to init electric shader:");
+                e.printStackTrace();
+            }
+        }
+        return dripShader;
+    }
+
+    public static ShaderProgram initDarkShader(ShaderProgram darkShader) {
+        if (darkShader == null) {
+            try {
+                darkShader = new ShaderProgram(
+                        Gdx.files.internal(makeShaderPath("storm/dark/vertex.vs")),
+                        Gdx.files.internal(makeShaderPath("storm/dark/fragment.fs"))
+                );
+                if (!darkShader.isCompiled()) {
+                    System.err.println(darkShader.getLog());
+                }
+                if (!darkShader.getLog().isEmpty()) {
+                    System.out.println(darkShader.getLog());
+                }
+            } catch (GdxRuntimeException e) {
+                System.out.println("ERROR: dark shader:");
+                e.printStackTrace();
+            }
+        }
+        return darkShader;
+    }
+
+    public static ShaderProgram initElectricShader(ShaderProgram electricShader) {
+        if (electricShader == null) {
+            try {
+                electricShader = new ShaderProgram(
+                        Gdx.files.internal(makeShaderPath("storm/electric/vertex.vs")),
+                        Gdx.files.internal(makeShaderPath("storm/electric/fragment.fs"))
+                );
+                if (!electricShader.isCompiled()) {
+                    System.err.println(electricShader.getLog());
+                }
+                if (!electricShader.getLog().isEmpty()) {
+                    System.out.println(electricShader.getLog());
+                }
+            } catch (GdxRuntimeException e) {
+                System.out.println("ERROR: electric shader:");
+                e.printStackTrace();
+            }
+        }
+        return electricShader;
     }
 }

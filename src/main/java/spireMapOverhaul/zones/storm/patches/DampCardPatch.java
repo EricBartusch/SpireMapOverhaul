@@ -27,6 +27,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import static spireMapOverhaul.SpireAnniversary6Mod.makeShaderPath;
+import static spireMapOverhaul.zones.storm.StormUtil.initDripShader;
 
 public class DampCardPatch {
     @SpirePatch(clz = AbstractCard.class, method = "render", paramtypez = SpriteBatch.class)
@@ -37,7 +38,7 @@ public class DampCardPatch {
         @SpirePrefixPatch
         public static SpireReturn<Void> Prefix(AbstractCard __instance, SpriteBatch spriteBatch) {
             if(dripShader == null) {
-                initDripShader();
+                dripShader = initDripShader(dripShader);
             }
             if (!Settings.hideCards) {
                 if (CardModifierManager.hasModifier(__instance, DampModifier.ID)) {
@@ -80,26 +81,6 @@ public class DampCardPatch {
             sb.begin();
             return StormUtil.getBufferTexture(fbo);
         }
-
-        private static void initDripShader() {
-            if (dripShader == null) {
-                try {
-                    dripShader = new ShaderProgram(
-                            Gdx.files.internal(makeShaderPath("storm/drip/vertex.vs")),
-                            Gdx.files.internal(makeShaderPath("storm/drip/fragment.fs"))
-                    );
-                    if (!dripShader.isCompiled()) {
-                        System.err.println(dripShader.getLog());
-                    }
-                    if (!dripShader.getLog().isEmpty()) {
-                        System.out.println(dripShader.getLog());
-                    }
-                } catch (GdxRuntimeException e) {
-                    System.out.println("ERROR: Failed to init drip shader:");
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     @SpirePatch(clz = SingleCardViewPopup.class, method = "render", paramtypez = SpriteBatch.class)
@@ -110,7 +91,7 @@ public class DampCardPatch {
         @SpireInsertPatch(locator = DampCardPatch.DripDripDripSCV.Locator.class)
         public static void ApplyShader(SingleCardViewPopup __instance, SpriteBatch sb) {
             if(dripShader == null) {
-                initDripShader();
+                dripShader = initDripShader(dripShader);
             }
             AbstractCard card = ReflectionHacks.getPrivate(__instance, SingleCardViewPopup.class, "card");
             if (CardModifierManager.hasModifier(card, DampModifier.ID)) {
@@ -139,26 +120,6 @@ public class DampCardPatch {
             public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
                 Matcher finalMatcher = new Matcher.MethodCallMatcher(SingleCardViewPopup.class, "renderArrows");
                 return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<Matcher>(), finalMatcher);
-            }
-        }
-
-        private static void initDripShader() {
-            if (dripShader == null) {
-                try {
-                    dripShader = new ShaderProgram(
-                            Gdx.files.internal(makeShaderPath("storm/electric/vertex.vs")),
-                            Gdx.files.internal(makeShaderPath("storm/electric/fragment.fs"))
-                    );
-                    if (!dripShader.isCompiled()) {
-                        System.err.println(dripShader.getLog());
-                    }
-                    if (!dripShader.getLog().isEmpty()) {
-                        System.out.println(dripShader.getLog());
-                    }
-                } catch (GdxRuntimeException e) {
-                    System.out.println("ERROR: Failed to init electric shader:");
-                    e.printStackTrace();
-                }
             }
         }
     }

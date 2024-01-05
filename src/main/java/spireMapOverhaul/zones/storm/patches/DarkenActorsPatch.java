@@ -23,50 +23,12 @@ import java.util.ArrayList;
 
 import static spireMapOverhaul.SpireAnniversary6Mod.makeShaderPath;
 import static spireMapOverhaul.SpireAnniversary6Mod.time;
+import static spireMapOverhaul.zones.storm.StormUtil.initDarkShader;
+import static spireMapOverhaul.zones.storm.StormUtil.initElectricShader;
 
 public class DarkenActorsPatch {
-    private static ShaderProgram shader = null;
+    private static ShaderProgram darkShader = null;
     private static ShaderProgram electricShader = null;
-
-    private static void initShader() {
-        if (shader == null) {
-            try {
-                shader = new ShaderProgram(
-                        Gdx.files.internal(makeShaderPath("storm/dark/vertex.vs")),
-                        Gdx.files.internal(makeShaderPath("storm/dark/fragment.fs"))
-                );
-                if (!shader.isCompiled()) {
-                    System.err.println(shader.getLog());
-                }
-                if (!shader.getLog().isEmpty()) {
-                    System.out.println(shader.getLog());
-                }
-            } catch (GdxRuntimeException e) {
-                System.out.println("ERROR: dark shader:");
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static void initElectricShader() {
-        if (electricShader == null) {
-            try {
-                electricShader = new ShaderProgram(
-                        Gdx.files.internal(makeShaderPath("storm/electric/vertex.vs")),
-                        Gdx.files.internal(makeShaderPath("storm/electric/fragment.fs"))
-                );
-                if (!electricShader.isCompiled()) {
-                    System.err.println(electricShader.getLog());
-                }
-                if (!electricShader.getLog().isEmpty()) {
-                    System.out.println(electricShader.getLog());
-                }
-            } catch (GdxRuntimeException e) {
-                System.out.println("ERROR: electric shader:");
-                e.printStackTrace();
-            }
-        }
-    }
 
     @SpirePatch(clz = AbstractPlayer.class, method = "renderPlayerImage")
     public static class DarkenPlayer {
@@ -112,7 +74,7 @@ public class DarkenActorsPatch {
                 } else {
                     playerTexture.setTexture(buffer.getColorBufferTexture());
                 }
-                initElectricShader();
+                electricShader = initElectricShader(electricShader);
                 sb.begin();
                 sb.setShader(electricShader);
                 electricShader.setUniformf("u_time", time);
@@ -129,10 +91,10 @@ public class DarkenActorsPatch {
                 } else {
                     playerTexture.setTexture(buffer.getColorBufferTexture());
                 }
-                initShader();
+                darkShader = initDarkShader(darkShader);
                 sb.begin();
-                sb.setShader(shader);
-                shader.setUniformf("u_time", AddLightningPatch.AbstractRoomFields.timeSinceStrike.get(AbstractDungeon.getCurrRoom()));
+                sb.setShader(darkShader);
+                darkShader.setUniformf("u_time", AddLightningPatch.AbstractRoomFields.timeSinceStrike.get(AbstractDungeon.getCurrRoom()));
                 sb.draw(playerTexture, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
                 sb.setShader(null);
                 sb.end();
@@ -185,9 +147,9 @@ public class DarkenActorsPatch {
                 } else {
                     playerTexture.setTexture(buffer.getColorBufferTexture());
                 }
-                initShader();
+                darkShader = initDarkShader(darkShader);
                 sb.begin();
-                sb.setShader(shader);
+                sb.setShader(darkShader);
                 sb.draw(playerTexture, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
                 sb.setShader(null);
                 sb.end();
