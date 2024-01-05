@@ -6,14 +6,14 @@ import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.vfx.AbstractGameEffect;
 import com.megacrit.cardcrawl.vfx.combat.EmptyStanceParticleEffect;
 
-public class PlayLightningEffect extends AbstractGameEffect {
+public class DispelPlayerElectricEffect extends AbstractGameEffect {
     private int numParticles = 10;
 
     private final float x;
 
     private final float y;
 
-    public PlayLightningEffect(float x, float y) {
+    public DispelPlayerElectricEffect(float x, float y) {
         this.duration = 0.0F;
         this.x = x;
         this.y = y;

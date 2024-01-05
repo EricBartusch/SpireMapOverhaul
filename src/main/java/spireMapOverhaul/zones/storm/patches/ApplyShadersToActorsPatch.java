@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.esotericsoftware.spine.SkeletonMeshRenderer;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.evacipated.cardcrawl.modthespire.patcher.PatchingException;
@@ -21,17 +20,16 @@ import spireMapOverhaul.zones.storm.StormUtil;
 
 import java.util.ArrayList;
 
-import static spireMapOverhaul.SpireAnniversary6Mod.makeShaderPath;
 import static spireMapOverhaul.SpireAnniversary6Mod.time;
 import static spireMapOverhaul.zones.storm.StormUtil.initDarkShader;
 import static spireMapOverhaul.zones.storm.StormUtil.initElectricShader;
 
-public class DarkenActorsPatch {
+public class ApplyShadersToActorsPatch {
     private static ShaderProgram darkShader = null;
     private static ShaderProgram electricShader = null;
 
     @SpirePatch(clz = AbstractPlayer.class, method = "renderPlayerImage")
-    public static class DarkenPlayer {
+    public static class ApplyPlayerShaders {
         private static FrameBuffer buffer;
         private static TextureRegion playerTexture;
 
@@ -65,7 +63,7 @@ public class DarkenActorsPatch {
 
         @SpireInsertPatch(locator = LocatorTwo.class)
         public static void endBufferAndDraw(AbstractPlayer __instance, SpriteBatch sb) {
-            if (StormUtil.activePlayerLightning) {
+            if (StormUtil.activePlayerLightning || StormUtil.isInStormZone()) {
                 sb.flush();
                 buffer.end();
                 if (playerTexture == null) {
@@ -74,27 +72,18 @@ public class DarkenActorsPatch {
                 } else {
                     playerTexture.setTexture(buffer.getColorBufferTexture());
                 }
-                electricShader = initElectricShader(electricShader);
-                sb.begin();
-                sb.setShader(electricShader);
-                electricShader.setUniformf("u_time", time);
-                electricShader.setUniformf("u_bright_time", StormUtil.brightTime);
-                sb.draw(playerTexture, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
-                sb.setShader(null);
-                sb.end();
-            } else if (StormUtil.isInStormZone()) {
-                sb.flush();
-                buffer.end();
-                if (playerTexture == null) {
-                    playerTexture = new TextureRegion(buffer.getColorBufferTexture());
-                    playerTexture.flip(false, true);
+                if(StormUtil.activePlayerLightning) {
+                    electricShader = initElectricShader(electricShader);
+                    sb.begin();
+                    sb.setShader(electricShader);
+                    electricShader.setUniformf("u_time", time);
+                    electricShader.setUniformf("u_bright_time", StormUtil.brightTime);
                 } else {
-                    playerTexture.setTexture(buffer.getColorBufferTexture());
+                    darkShader = initDarkShader(darkShader);
+                    sb.begin();
+                    sb.setShader(darkShader);
+                    darkShader.setUniformf("u_time", AddLightningPatch.AbstractRoomFields.timeSinceStrike.get(AbstractDungeon.getCurrRoom()));
                 }
-                darkShader = initDarkShader(darkShader);
-                sb.begin();
-                sb.setShader(darkShader);
-                darkShader.setUniformf("u_time", AddLightningPatch.AbstractRoomFields.timeSinceStrike.get(AbstractDungeon.getCurrRoom()));
                 sb.draw(playerTexture, -Settings.VERT_LETTERBOX_AMT, -Settings.HORIZ_LETTERBOX_AMT);
                 sb.setShader(null);
                 sb.end();
@@ -138,7 +127,6 @@ public class DarkenActorsPatch {
         @SpireInsertPatch(locator = LocatorTwo.class)
         public static void endBufferAndDraw(AbstractMonster __instance, SpriteBatch sb) {
             if (StormUtil.isInStormZone()) {
-
                 sb.flush();
                 buffer.end();
                 if (playerTexture == null) {

@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import spireMapOverhaul.zones.storm.StormUtil;
 
-public class TogglePlayerLightningAction extends AbstractGameAction {
+public class TogglePlayerElecticShaderAction extends AbstractGameAction {
 
     private static final float EFFECT_DUR = 0.5f;
-    public TogglePlayerLightningAction() {
+    public TogglePlayerElecticShaderAction() {
         this.duration = EFFECT_DUR;
     }
 

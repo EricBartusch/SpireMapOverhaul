@@ -37,6 +37,7 @@ public class AddLightningPatch {
         @SpirePrefixPatch()
         public static void Prefix() {
             if(StormUtil.isInStormZone()) {
+                //Lightning Strikes
                 if (AbstractRoomFields.timeToStrike.get(AbstractDungeon.getCurrRoom()) < 0.0f) {
                     float rand_y = MathUtils.random(((float) Settings.HEIGHT / 2) - 50.0f * Settings.scale, ((float) Settings.HEIGHT / 2) - 350.0f * Settings.scale);
                     boolean renderBehind = rand_y > (float) Settings.HEIGHT / 2 - 250.0f;
@@ -51,6 +52,7 @@ public class AddLightningPatch {
                 AbstractRoomFields.timeSinceStrike.set(AbstractDungeon.getCurrRoom(), AbstractRoomFields.timeSinceStrike.get(AbstractDungeon.getCurrRoom()) + Gdx.graphics.getDeltaTime());
 
 
+                //Conduit power vfx that happens during turn
                 AbstractCreature conduitTarget = AbstractRoomFields.conduitTarget.get(AbstractDungeon.getCurrRoom());
                 if(conduitTarget != null) {
                     vfxTimer -= Gdx.graphics.getDeltaTime();
