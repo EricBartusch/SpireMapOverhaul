@@ -22,6 +22,7 @@ import com.megacrit.cardcrawl.screens.DungeonMapScreen;
 import spireMapOverhaul.BetterMapGenerator;
 import spireMapOverhaul.SpireAnniversary6Mod;
 import spireMapOverhaul.abstracts.AbstractZone;
+import spireMapOverhaul.zoneInterfaces.RenderableZone;
 import spireMapOverhaul.zoneInterfaces.RewardModifyingZone;
 import spireMapOverhaul.zoneInterfaces.ShopModifyingZone;
 import spireMapOverhaul.zones.brokenSpace.patches.BrokenSpaceRenderPatch;
@@ -31,13 +32,12 @@ import java.util.ArrayList;
 import static com.megacrit.cardcrawl.dungeons.AbstractDungeon.cardRng;
 import static spireMapOverhaul.util.Wiz.adp;
 
-public class BrokenSpaceZone extends AbstractZone implements RewardModifyingZone, ShopModifyingZone {
+public class BrokenSpaceZone extends AbstractZone implements RewardModifyingZone, ShopModifyingZone, RenderableZone {
     public static final String ID = "BrokenSpace";
     private static final float OFFSET_X = Settings.isMobile ? 496.0F * Settings.xScale : 560.0F * Settings.xScale;
     private static final float OFFSET_Y = 180.0F * Settings.scale;
     private static final float SPACING_X = Settings.isMobile ? (int) (Settings.xScale * 64.0F) * 2.2F : (int) (Settings.xScale * 64.0F) * 2.0F;
     public static ArrayList<String> BrokenRelics = new ArrayList<>();
-    private final int width, height;
     private final Color color;
     public static float shaderTimer = 0.0F;
 
@@ -73,18 +73,13 @@ public class BrokenSpaceZone extends AbstractZone implements RewardModifyingZone
     public void renderOnMap(SpriteBatch sb, float alpha) {
         BrokenSpaceRenderPatch.StartFbo(sb);
         super.renderOnMap(sb, alpha);
-        BrokenSpaceRenderPatch.StopFbo(sb);
+        BrokenSpaceRenderPatch.StopFbo(sb, 1.0f, 0.0f, 0.03f, 0.2f, 0.5f);
         if (alpha > 0) {
             FontHelper.renderFontCentered(sb, FontHelper.menuBannerFont, name,
                     labelX * SPACING_X + OFFSET_X, labelY * Settings.MAP_DST_Y + OFFSET_Y + DungeonMapScreen.offsetY,
                     Color.WHITE.cpy(), 0.8f
             );
         }
-    }
-
-    @Override
-    public boolean generateMapArea(BetterMapGenerator.MapPlanner planner) {
-        return generateNormalArea(planner, width, height);
     }
 
     @Override
@@ -252,12 +247,19 @@ public class BrokenSpaceZone extends AbstractZone implements RewardModifyingZone
         public static SpireField<Boolean> unnatural = new SpireField<>(() -> false);
     }
 
+    @Override
+    public void renderBackground(SpriteBatch sb) {
+        BrokenSpaceRenderPatch.StartFbo(sb);
+    }
+
+    @Override
+    public void postRenderBackground(SpriteBatch sb) {
+        BrokenSpaceRenderPatch.StopFbo(sb, 0.05F, 0.0f, 4f, 0.1f);
+    }
 
     public static void addBrokenRelic(String relicID) {
         if (!BrokenRelics.contains(relicID)) {
             BrokenRelics.add(relicID);
         }
     }
-
-
 }
