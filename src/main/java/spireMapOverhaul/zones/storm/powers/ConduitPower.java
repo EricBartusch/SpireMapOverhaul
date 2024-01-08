@@ -49,6 +49,11 @@ public class ConduitPower extends AbstractSMOPower {
     }
 
     @Override
+    public void onDeath() {
+        StormUtil.conduitTarget = null;
+    }
+
+    @Override
     public void renderAmount(SpriteBatch sb, float x, float y, Color c) {
         redColor.a = c.a;
         c = redColor;
