@@ -42,9 +42,6 @@ public class StormZone extends AbstractZone implements CombatModifyingZone, Rewa
     public static ShaderProgram mapShader;
     static FrameBuffer fbo = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, false);
 
-    private static float timeToStrikeMap = 0.1F;
-    private static float timeSinceStrikeMap = 0.3F;
-
     public StormZone() {
         super(ID, Icons.MONSTER);
         this.width = 2;
@@ -141,12 +138,5 @@ public class StormZone extends AbstractZone implements CombatModifyingZone, Rewa
         sb.draw(region, 0, 0);
         sb.setShader(null);
         sb.flush();
-
-        if (timeToStrikeMap < 0.0f) {
-            timeToStrikeMap = MathUtils.random(3.5f, 10.0f);
-            timeSinceStrikeMap = 0.0f;
-        }
-        timeToStrikeMap = timeToStrikeMap - Gdx.graphics.getRawDeltaTime();
-        timeSinceStrikeMap = timeSinceStrikeMap + Gdx.graphics.getRawDeltaTime();
     }
 }
